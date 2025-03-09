@@ -34,7 +34,7 @@ class Settings(BaseSettings):
 
     @computed_field
     @property
-    def POSTGRES_URL_ASYNC(self):
+    def POSTGRES_URL_ASYNC(self) -> PostgresDsn:
         return MultiHostUrl.build(
             scheme="postgresql+asyncpg",
             username=self.POSTGRES_USER,
@@ -44,17 +44,17 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
-    @computed_field
-    @property
-    def POSTGRES_URL(self):
-        return MultiHostUrl.build(
-            scheme="postgresql",
-            username=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.POSTGRES_SERVER,
-            port=self.POSTGRES_PORT,
-            path=self.POSTGRES_DB,
-        )
+    # @computed_field
+    # @property
+    # def POSTGRES_URL(self) -> PostgresDsn:
+    #     return MultiHostUrl.build(
+    #         scheme="postgresql",
+    #         username=self.POSTGRES_USER,
+    #         password=self.POSTGRES_PASSWORD,
+    #         host=self.POSTGRES_SERVER,
+    #         port=self.POSTGRES_PORT,
+    #         path=self.POSTGRES_DB,
+    #     )
 
 
 settings = Settings()

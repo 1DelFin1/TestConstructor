@@ -3,7 +3,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
+from src.api.routers import editor
+from src.core.config import settings
+
 app = FastAPI()
+app.include_router(editor.router)
 
 all_cors_origins = [
     '*',
@@ -24,4 +28,4 @@ async def hello():
 
 
 if __name__ == '__main__':
-    uvicorn.run('main:app', reload=True)
+    uvicorn.run("src.main:app", reload=True)
