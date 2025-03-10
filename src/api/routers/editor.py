@@ -5,7 +5,7 @@ from fastapi import APIRouter, Query, Depends, HTTPException, status
 
 from src.api.deps import SessionDep
 from src.core.database import engine, session_factory, Base
-from src.schemas import EditorAddSchema, EditorSchema, UserSchema, UserAddSchema, TestAddSchema
+from src.schemas import EditorAddSchema, EditorSchema, UserSchema, UserAddSchema, TestAddSchema, UserInDBSchema
 from src.models import EditorModel, TestModel, UserModel
 
 
@@ -16,7 +16,7 @@ router = APIRouter(
 
 
 @router.post('/create_user')
-async def create_user(user: UserAddSchema, session: SessionDep):
+async def create_user(user: UserInDBSchema, session: SessionDep):
     new_user = user.model_dump()
     us = UserModel(**new_user)
     session.add(us)

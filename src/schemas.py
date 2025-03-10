@@ -21,7 +21,34 @@ class TimestampSchema(BaseModel):
     pass
 
 
-class UserAddSchema(BaseModel):
+class UserBaseSchema(BaseModel):
+    email: EmailStr = Field(max_length=255)
+    first_name: str
+    last_name: str
+    is_active: bool = True
+    is_superuser: bool = False
+    role: str
+    username: str | None = Field(default=None, max_length=255)
+
+
+class UserAddSchema(UserBaseSchema):
+    password: str = Field(max_length=40)
+
+
+class UserOutSchema(UserBaseSchema):
+    id: UUID
+
+    class Config:
+        from_attributes = True
+
+
+class UserInDBSchema(UserBaseSchema):
+    id: UUID
+    hashed_password: str
+
+
+class UserSchema(BaseModel):
+    id: UUID
     email: str
     first_name: str
     last_name: str
@@ -32,10 +59,6 @@ class UserAddSchema(BaseModel):
     is_superuser: bool = False
     created_at: datetime
     updated_at: datetime
-
-
-class UserSchema(UserAddSchema):
-    id: UUID
     tests: list["TestSchema"]
 
 
