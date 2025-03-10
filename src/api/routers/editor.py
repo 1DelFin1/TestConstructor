@@ -1,11 +1,12 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from fastapi import APIRouter
+from fastapi import APIRouter, Query, Depends, HTTPException, status
 
-from src.schemas.editor import *
-from src.core.database import engine, session_factory
-from src.models.editor import *
+from src.api.deps import SessionDep
+from src.schemas.editor import EditorAddSchema, EditorSchema
+from src.core.database import engine, session_factory, Base
+from src.models.editor import EditorModel
 
 
 router = APIRouter(
@@ -15,22 +16,19 @@ router = APIRouter(
 
 
 @router.post("")
-async def add_editor(editor: EditorAddSchema):
-    async with session_factory() as session:
-        editor_one = EditorModel(username=editor.username, age=editor.age)
-        session.add(editor_one)
-        await session.commit()
+async def add_editor(editor: EditorAddSchema, session: SessionDep):
+    editor_one = EditorModel(username=editor.username, age=editor.age)
+    print(editor_one)
+    session.add(editor_one)
+    await session.commit()
     return {'response': True}
 
 
 @router.get("")
-async def get_editor():
-    async with session_factory() as session:
-        query = (
-            select(EditorModel)
-        )
-        res = await session.execute(query)
-        result = res.scalars().all()
+async def get_editor(session: SessionDep):
+    query = select(EditorModel)
+    res = await session.execute(query)
+    result = res.scalars().all()
     return {'response': result}
 
 

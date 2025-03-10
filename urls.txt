@@ -1,0 +1,26 @@
+# address can be "http://127.0.0.1:8000" or
+# "http://localhost:8000"
+
+
+# users
+http://localhost:8000/users/login
+http://localhost:8000/users/registration
+
+# intern
+http://localhost:8000/intern/intern_board
+http://localhost:8000/intern/edit_test/{test_id}
+http://localhost:8000/intern/edit_test/api/tests/{test_id}
+http://localhost:8000/intern/edit_test/{test_id}/api/tests
+
+# editor
+http://localhost:8000/editor/editor_main
+http://localhost:8000/editor/constructor
+http://localhost:8000/editor/menu_konst
+http://localhost:8000/editor/get_tests
+http://localhost:8000/editor/constructor/api/tests
+http://localhost:8000/editor/vac_konst
+http://localhost:8000/editor/save_vacancy
+http://localhost:8000/editor/edit_test/{test_id}/api/tests
+http://localhost:8000/editor/delete_test/{test_id}
+http://localhost:8000/editor/edit_test/{test_id}
+http://localhost:8000/editor/edit_test/api/tests/{test_id}
