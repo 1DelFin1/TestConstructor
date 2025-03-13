@@ -24,9 +24,8 @@ router = APIRouter(
 
 @router.post("/create_user")
 async def create_user(user: UserAddSchema, session: SessionDep):
-    new_user = user.model_dump()
+    new_user = user.model_dump(exclude={"password"})
     new_user["hashed_password"] = get_password_hash(user.password)
-    new_user.pop("password")
     res_user = UserModel(**new_user)
     session.add(res_user)
     await session.commit()
