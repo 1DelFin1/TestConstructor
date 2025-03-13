@@ -10,7 +10,7 @@ app = FastAPI()
 app.include_router(editor.router)
 
 all_cors_origins = [
-    '*',
+    "*",
 ]
 
 app.add_middleware(
@@ -22,10 +22,10 @@ app.add_middleware(
 )
 
 
-@app.get('/')
+@app.get("/")
 async def hello():
-    return HTMLResponse(content='<h1>Hello There!</h1>')
+    return HTMLResponse(content="<h1>Hello There!</h1>")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     uvicorn.run("src.main:app", reload=True)

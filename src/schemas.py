@@ -3,17 +3,6 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from datetime import datetime
 from typing import Optional
 
-from src.models import TimestampMixin
-
-
-class EditorAddSchema(BaseModel):
-    username: str
-    age: int
-
-
-class EditorSchema(EditorAddSchema):
-    id: int
-
 
 class TimestampSchema(BaseModel):
     # created_at: datetime
@@ -62,7 +51,7 @@ class UserSchema(BaseModel):
     tests: list["TestSchema"]
 
 
-class TestAddSchema(BaseModel):
+class TestBaseSchema(BaseModel):
     title: str
     description: str
     created_at: datetime
@@ -70,7 +59,14 @@ class TestAddSchema(BaseModel):
     user_id: UUID
 
 
+class TestAddSchema(TestBaseSchema):
+    pass
+
+
+class TestOutSchema(TestBaseSchema):
+    id: UUID
+
+
 class TestSchema(TimestampSchema):
     id: UUID
-    author: UserSchema
-
+    author: "UserSchema"
