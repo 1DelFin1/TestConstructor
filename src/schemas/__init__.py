@@ -5,7 +5,6 @@ __all__ = (
     "UserOutSchema",
     "UserInDBSchema",
     "TestSchema",
-    "TestSchema",
     "TestBaseSchema",
     "TestAddSchema",
     "TestOutSchema",

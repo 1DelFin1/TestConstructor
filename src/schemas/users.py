@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field
+
 from datetime import datetime
 
-from src.schemas import TestSchema
+
+if TYPE_CHECKING:
+    from src.schemas.tests import TestSchema
 
 
 class UserBaseSchema(BaseModel):
