@@ -1,27 +1,21 @@
 from datetime import datetime
-import enum
+from typing import TYPE_CHECKING
 from uuid import uuid4, UUID
-from typing import Annotated, Optional
+
 from sqlalchemy import (
-    Table,
-    Column,
-    Integer,
     String,
-    MetaData,
     ForeignKey,
     func,
-    text,
-    DATETIME,
-    CheckConstraint,
-    CheckConstraint,
-    UniqueConstraint,
-    Index,
     DateTime,
     Boolean,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database import Base
+
+
+if TYPE_CHECKING:
+    from src.models.tests import TestModel
 
 
 class TimestampMixin:
@@ -52,16 +46,4 @@ class UserModel(Base, TimestampMixin):
     role: Mapped[str] = mapped_column(String(255), nullable=False)
     tests: Mapped[list["TestModel"]] = relationship(
         back_populates="author",
-    )
-
-
-class TestModel(Base, TimestampMixin):
-    __tablename__ = "tests"
-
-    id: Mapped[UUID] = mapped_column(default=uuid4, primary_key=True, nullable=False)
-    title: Mapped[str] = mapped_column(String(256), nullable=False)
-    description: Mapped[str]
-    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
-    author: Mapped["UserModel"] = relationship(
-        back_populates="tests",
     )
