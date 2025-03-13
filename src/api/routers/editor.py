@@ -3,9 +3,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import APIRouter, Query, Depends, HTTPException, status
 
+from src.core.security import get_password_hash
 from src.api.deps import SessionDep
 from src.core.database import engine, session_factory, Base
-from src.schemas import UserSchema, UserAddSchema, TestAddSchema, UserInDBSchema
+from src.schemas import (
+    UserAddSchema,
+    UserInDBSchema,
+    UserOutSchema,
+    TestOutSchema,
+    TestAddSchema,
+)
 from src.models import TestModel, UserModel
 
 
@@ -16,10 +23,12 @@ router = APIRouter(
 
 
 @router.post("/create_user")
-async def create_user(user: UserInDBSchema, session: SessionDep):
+async def create_user(user: UserAddSchema, session: SessionDep):
     new_user = user.model_dump()
-    us = UserModel(**new_user)
-    session.add(us)
+    new_user["hashed_password"] = get_password_hash(user.password)
+    new_user.pop("password")
+    res_user = UserModel(**new_user)
+    session.add(res_user)
     await session.commit()
     return {"response": True}
 
