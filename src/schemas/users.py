@@ -1,13 +1,8 @@
 from uuid import UUID
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
-from typing import Optional
 
-
-class TimestampSchema(BaseModel):
-    # created_at: datetime
-    # updated_at: datetime
-    pass
+from src.schemas import TestSchema
 
 
 class UserBaseSchema(BaseModel):
@@ -49,24 +44,3 @@ class UserSchema(BaseModel):
     created_at: datetime
     updated_at: datetime
     tests: list["TestSchema"]
-
-
-class TestBaseSchema(BaseModel):
-    title: str
-    description: str
-    created_at: datetime
-    updated_at: datetime
-    user_id: UUID
-
-
-class TestAddSchema(TestBaseSchema):
-    pass
-
-
-class TestOutSchema(TestBaseSchema):
-    id: UUID
-
-
-class TestSchema(TimestampSchema):
-    id: UUID
-    author: "UserSchema"
