@@ -43,7 +43,6 @@ class UserModel(Base, TimestampMixin):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    role: Mapped[str] = mapped_column(String(255), nullable=False)
     tests: Mapped[list["TestModel"]] = relationship(
         back_populates="author",
     )

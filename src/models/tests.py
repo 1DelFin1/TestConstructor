@@ -1,5 +1,6 @@
 from uuid import uuid4, UUID
 from typing import TYPE_CHECKING
+from enum import Enum
 
 from sqlalchemy import (
     String,
@@ -15,6 +16,12 @@ if TYPE_CHECKING:
     from src.models.users import UserModel
 
 
+class QuestionTypes(Enum):
+    single = "single"
+    multiple = "multiple"
+    text = "text"
+
+
 class TestModel(Base, TimestampMixin):
     __tablename__ = "tests"
 
@@ -25,3 +32,7 @@ class TestModel(Base, TimestampMixin):
     author: Mapped["UserModel"] = relationship(
         back_populates="tests",
     )
+
+
+# class QuestionModel(Base, TimestampMixin):
+#     id: Mapped[int] = mapped_column(primary_key=True, nullable=False)

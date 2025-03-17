@@ -15,7 +15,6 @@ class UserBaseSchema(BaseModel):
     last_name: str
     is_active: bool = True
     is_superuser: bool = False
-    role: str
     username: str | None = Field(default=None, max_length=255)
 
 
@@ -43,7 +42,6 @@ class UserSchema(BaseModel):
     username: str | None
     hashed_password: str
     is_active: bool
-    role: str
     is_superuser: bool = False
     created_at: datetime
     updated_at: datetime
