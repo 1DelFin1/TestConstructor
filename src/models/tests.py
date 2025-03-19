@@ -8,15 +8,17 @@ from sqlalchemy import (
     Boolean,
     Integer,
     Float,
+    Enum as SQLAEnum,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
 from src.core.database import Base
 from src.models.users import TimestampMixin
 
 
 if TYPE_CHECKING:
-    from src.models.users import UserModel
+    from src.models.users import UserModel, TestedUserModel
 
 
 class QuestionTypes(Enum):
@@ -57,7 +59,9 @@ class QuestionModel(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     title: Mapped[str] = mapped_column(String(256), nullable=False)
-    question_type: Mapped[QuestionTypes] = mapped_column(nullable=False)
+    question_type: Mapped[QuestionTypes] = mapped_column(
+        nullable=False,
+    )
     scores: Mapped[int] = mapped_column(Integer, nullable=False)
 
     test_id: Mapped[int] = mapped_column(
@@ -99,9 +103,17 @@ class ResultModel(Base, TimestampMixin):
     score: Mapped[float] = mapped_column(Float, nullable=False)
 
     test_id: Mapped[int] = mapped_column(
-        ForeignKey("tests.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("tests.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    tested_user_id: Mapped[int] = mapped_column(
+        ForeignKey("tested_users.id", ondelete="CASCADE"),
+        nullable=False,
     )
 
     test: Mapped["TestModel"] = relationship(
         back_populates="results",
+    )
+    tested_user: Mapped["TestedUserModel"] = relationship(
+        back_populates="result",
     )

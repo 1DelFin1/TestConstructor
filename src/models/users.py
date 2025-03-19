@@ -8,6 +8,7 @@ from sqlalchemy import (
     func,
     DateTime,
     Boolean,
+    Integer,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -15,7 +16,7 @@ from src.core.database import Base
 
 
 if TYPE_CHECKING:
-    from src.models.tests import TestModel
+    from src.models.tests import TestModel, ResultModel
 
 
 class TimestampMixin:
@@ -35,8 +36,8 @@ class UserModel(Base, TimestampMixin):
     email: Mapped[str] = mapped_column(
         String(255), unique=True, index=True, nullable=False
     )
-    first_name: Mapped[String] = mapped_column(String(255), nullable=False)
-    last_name: Mapped[String] = mapped_column(String(255), nullable=False)
+    first_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    last_name: Mapped[str] = mapped_column(String(255), nullable=False)
     username: Mapped[str | None] = mapped_column(
         String(255), default=None, nullable=True
     )
@@ -45,4 +46,21 @@ class UserModel(Base, TimestampMixin):
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     tests: Mapped[list["TestModel"]] = relationship(
         back_populates="author",
+    )
+
+
+class TestedUserModel(Base, TimestampMixin):
+    __tablename__ = "tested_users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    email: Mapped[str] = mapped_column(
+        String(255), unique=True, index=True, nullable=False
+    )
+    first_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    last_name: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    result_id: Mapped[int] = mapped_column(ForeignKey("results.id"), nullable=False)
+
+    result: Mapped["ResultModel"] = relationship(
+        back_populates="tested_user",
     )
