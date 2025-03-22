@@ -60,8 +60,7 @@ class TestedUserModel(Base, TimestampMixin):
     last_name: Mapped[str] = mapped_column(String(255), nullable=False)
     score: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    result_id: Mapped[int] = mapped_column(ForeignKey("results.id"), nullable=False)
-
     result: Mapped["ResultModel"] = relationship(
+        "ResultModel",
         back_populates="tested_user",
     )

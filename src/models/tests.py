@@ -10,7 +10,7 @@ from sqlalchemy import (
     Float,
     Enum as SQLAEnum,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, Relationship
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
 from src.core.database import Base
@@ -109,11 +109,15 @@ class ResultModel(Base, TimestampMixin):
     tested_user_id: Mapped[int] = mapped_column(
         ForeignKey("tested_users.id", ondelete="CASCADE"),
         nullable=False,
+        unique=True,
     )
 
     test: Mapped["TestModel"] = relationship(
+        "TestModel",
         back_populates="results",
+        foreign_keys=[test_id],
     )
     tested_user: Mapped["TestedUserModel"] = relationship(
+        "TestedUserModel",
         back_populates="result",
     )
