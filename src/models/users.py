@@ -4,7 +4,6 @@ from uuid import uuid4, UUID
 
 from sqlalchemy import (
     String,
-    ForeignKey,
     func,
     DateTime,
     Boolean,

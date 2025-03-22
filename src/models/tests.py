@@ -1,4 +1,4 @@
-from uuid import uuid4, UUID
+from uuid import UUID
 from typing import TYPE_CHECKING
 from enum import Enum
 
@@ -8,10 +8,8 @@ from sqlalchemy import (
     Boolean,
     Integer,
     Float,
-    Enum as SQLAEnum,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship, Relationship
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database import Base
 from src.models.users import TimestampMixin
@@ -59,9 +57,7 @@ class QuestionModel(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     title: Mapped[str] = mapped_column(String(256), nullable=False)
-    question_type: Mapped[QuestionTypes] = mapped_column(
-        nullable=False,
-    )
+    question_type: Mapped[QuestionTypes] = mapped_column(nullable=False)
     scores: Mapped[int] = mapped_column(Integer, nullable=False)
 
     test_id: Mapped[int] = mapped_column(

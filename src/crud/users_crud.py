@@ -1,12 +1,15 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.models import UserModel
-from src.schemas import UserAddSchema
+from src.schemas import UserCreateSchema
+
 # from src.core.security import get_password_hash, verify_password
 from uuid import UUID
 from sqlalchemy import select
 
 
-async def create_user(db_session: AsyncSession, user_create: UserAddSchema) -> UserModel:
+async def create_user(
+    db_session: AsyncSession, user_create: UserCreateSchema
+) -> UserModel:
     user_dict = user_create.model_dump()
     user_dict["hashed_password"] = get_password_hash(user_create.password)
     user_db = UserModel(**user_dict)

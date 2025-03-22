@@ -18,7 +18,7 @@ class UserBaseSchema(BaseModel):
     username: str | None = Field(default=None, max_length=255)
 
 
-class UserAddSchema(UserBaseSchema):
+class UserCreateSchema(UserBaseSchema):
     password: str = Field(max_length=40)
 
 

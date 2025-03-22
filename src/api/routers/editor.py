@@ -7,11 +7,11 @@ from src.core.security import get_password_hash
 from src.api.deps import SessionDep
 from src.core.database import engine, session_factory, Base
 from src.schemas import (
-    UserAddSchema,
+    UserCreateSchema,
     UserInDBSchema,
     UserOutSchema,
     TestOutSchema,
-    TestAddSchema,
+    TestCreateSchema,
 )
 from src.models import TestModel, UserModel
 
@@ -23,7 +23,7 @@ router = APIRouter(
 
 
 @router.post("/create_user")
-async def create_user(user: UserAddSchema, session: SessionDep):
+async def create_user(user: UserCreateSchema, session: SessionDep):
     new_user = user.model_dump(exclude={"password"})
     new_user["hashed_password"] = get_password_hash(user.password)
     res_user = UserModel(**new_user)
@@ -41,7 +41,7 @@ async def get_users(session: SessionDep):
 
 
 @router.post("/create_test")
-async def create_test(test: TestAddSchema, session: SessionDep):
+async def create_test(test: TestCreateSchema, session: SessionDep):
     new_test = test.model_dump()
     us = TestModel(**new_test)
     session.add(us)
