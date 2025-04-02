@@ -12,6 +12,7 @@ class ResultBaseSchema(TimestampSchema):
     score: float
     test_id: int
     tested_user_id: int
+    score_passed: bool
 
 
 class ResultCreateSchema(ResultBaseSchema):
@@ -32,5 +33,6 @@ class ResultSchema(TimestampSchema):
     score: float
     test_id: int
     tested_user_id: int
+    score_passed: bool
     test: "TestSchema"
     tested_user: "TestedUserSchema"

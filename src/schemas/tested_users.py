@@ -27,7 +27,7 @@ class TestedUserOutSchema(TestedUserBaseSchema):
         from_attributes = True
 
 
-class TestedUserSchema(TestedUserCreateSchema):
+class TestedUserSchema(TimestampSchema):
     id: int
     email: str
     first_name: str

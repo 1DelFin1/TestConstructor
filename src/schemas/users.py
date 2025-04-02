@@ -1,15 +1,15 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import EmailStr, Field
 
-from datetime import datetime
+from src.schemas.timestamp import TimestampSchema
 
 
 if TYPE_CHECKING:
     from src.schemas.tests import TestSchema
 
 
-class UserBaseSchema(BaseModel):
+class UserBaseSchema(TimestampSchema):
     email: EmailStr = Field(max_length=255)
     first_name: str
     last_name: str
@@ -34,7 +34,7 @@ class UserInDBSchema(UserBaseSchema):
     hashed_password: str
 
 
-class UserSchema(BaseModel):
+class UserSchema(TimestampSchema):
     id: UUID
     email: str
     first_name: str
@@ -43,6 +43,4 @@ class UserSchema(BaseModel):
     hashed_password: str
     is_active: bool
     is_superuser: bool = False
-    created_at: datetime
-    updated_at: datetime
     tests: list["TestSchema"]

@@ -1,31 +1,19 @@
-from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import uuid4, UUID
 
 from sqlalchemy import (
     String,
-    func,
-    DateTime,
     Boolean,
     Integer,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database import Base
+from src.models.mixins import TimestampMixin
 
 
 if TYPE_CHECKING:
     from src.models.tests import TestModel, ResultModel
-
-
-class TimestampMixin:
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=func.now(), nullable=False
-    )
-
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=func.now(), onupdate=func.now(), nullable=False
-    )
 
 
 class UserModel(Base, TimestampMixin):

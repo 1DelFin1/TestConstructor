@@ -12,7 +12,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.database import Base
-from src.models.users import TimestampMixin
+from src.models.mixins import TimestampMixin
 
 
 if TYPE_CHECKING:
@@ -31,6 +31,7 @@ class TestModel(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     title: Mapped[str] = mapped_column(String(256), nullable=False)
     description: Mapped[str] = mapped_column(String(256), nullable=False)
+    passing_score: Mapped[int] = mapped_column(Float, nullable=False)
 
     user_id: Mapped[UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -97,6 +98,7 @@ class ResultModel(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     score: Mapped[float] = mapped_column(Float, nullable=False)
+    score_passed: Mapped[bool] = mapped_column(Boolean, nullable=False)
 
     test_id: Mapped[int] = mapped_column(
         ForeignKey("tests.id", ondelete="CASCADE"),

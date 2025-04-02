@@ -15,6 +15,7 @@ class TestBaseSchema(TimestampSchema):
     title: str = Field(max_length=256)
     description: str = Field(max_length=256)
     user_id: UUID
+    passing_score: float
 
 
 class TestCreateSchema(TestBaseSchema):
@@ -35,6 +36,7 @@ class TestUpdateSchema(BaseModel):
     title: str | None = Field(default=None, max_length=256)
     description: str | None = Field(default=None, max_length=256)
     user_id: UUID | None = None
+    passing_score: float | None = None
 
 
 class TestSchema(TimestampSchema):
@@ -42,6 +44,7 @@ class TestSchema(TimestampSchema):
     title: str
     description: str
     user_id: UUID
+    passing_score: float
     author: "UserSchema"
     questions: list["QuestionSchema"]
     results: list["ResultSchema"]
