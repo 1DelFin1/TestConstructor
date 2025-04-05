@@ -3,22 +3,21 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
-from src.api.routers import editor
+from src.api.routers import users, crm, tests
 from src.core.config import settings
 
-app = FastAPI()
-app.include_router(editor.router)
 
-all_cors_origins = [
-    "*",
-]
+app = FastAPI()
+app.include_router(crm.router)
+app.include_router(users.router)
+app.include_router(tests.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=all_cors_origins,
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=settings.CORS_METHODS,
+    allow_headers=settings.CORS_HEADERS,
 )
 
 

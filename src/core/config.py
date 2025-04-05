@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
 
+    ECHO: bool
+
+    CORS_ORIGINS: list[str]
+    CORS_METHODS: list[str]
+    CORS_HEADERS: list[str]
+
     @computed_field
     @property
     def POSTGRES_URL_ASYNC(self) -> PostgresDsn:
