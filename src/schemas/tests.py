@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field
@@ -7,7 +8,7 @@ from src.schemas.timestamp import TimestampSchema
 
 if TYPE_CHECKING:
     from src.schemas.users import UserSchema
-    from src.schemas.questions import QuestionSchema
+    from src.schemas.questions import QuestionSchema, QuestionCreateSchema
     from src.schemas.results import ResultSchema
 
 
@@ -19,14 +20,16 @@ class TestBaseSchema(TimestampSchema):
 
 
 class TestCreateSchema(TestBaseSchema):
-    pass
+    # pass
+    author: "UserSchema"
+    questions: list["QuestionCreateSchema"]
 
 
 class TestOutSchema(TestBaseSchema):
     id: int
     author: "UserSchema"
-    questions: list["QuestionSchema"]
-    results: list["ResultSchema"]
+    questions: list["QuestionSchema"] | None
+    results: list["ResultSchema"] | None
 
     class Config:
         from_attributes = True
@@ -48,3 +51,10 @@ class TestSchema(TimestampSchema):
     author: "UserSchema"
     questions: list["QuestionSchema"]
     results: list["ResultSchema"]
+
+
+# TestBaseSchema.model_rebuild()
+# TestCreateSchema.model_rebuild()
+# TestOutSchema.model_rebuild()
+# TestUpdateSchema.model_rebuild()
+# TestSchema.model_rebuild()

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING
 from pydantic import BaseModel, Field
 
@@ -38,3 +39,10 @@ class OptionSchema(TimestampSchema):
     is_correct: bool
     question_id: int
     question: "QuestionSchema"
+
+
+# OptionBaseSchema.model_rebuild()
+# OptionCreateSchema.model_rebuild()
+# OptionOutSchema.model_rebuild()
+# OptionUpdateSchema.model_rebuild()
+# OptionSchema.model_rebuild()

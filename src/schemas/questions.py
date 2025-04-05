@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING
 from pydantic import BaseModel, Field
 
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
 
 class QuestionBaseSchema(TimestampSchema):
     title: str = Field(max_length=256)
-    question_type: QuestionTypes
+    question_type: "QuestionTypes"
     scores: int
     test_id: int
 
@@ -40,8 +41,15 @@ class QuestionUpdateSchema(BaseModel):
 class QuestionSchema(TimestampSchema):
     id: int
     title: str = Field(max_length=256)
-    question_type: QuestionTypes
+    question_type: "QuestionTypes"
     scores: int
     test_id: int
     test: "TestSchema"
     options: list["OptionSchema"]
+
+
+# QuestionBaseSchema.model_rebuild()
+# QuestionCreateSchema.model_rebuild()
+# QuestionOutSchema.model_rebuild()
+# QuestionUpdateSchema.model_rebuild()
+# QuestionSchema.model_rebuild()

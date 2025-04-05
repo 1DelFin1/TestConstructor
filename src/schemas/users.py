@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING
+# from __future__ import annotations
+from typing import TYPE_CHECKING, ForwardRef
 from uuid import UUID
 from pydantic import EmailStr, Field
 
@@ -44,3 +45,10 @@ class UserSchema(TimestampSchema):
     is_active: bool
     is_superuser: bool = False
     tests: list["TestSchema"]
+
+
+# UserBaseSchema.model_rebuild()
+# UserCreateSchema.model_rebuild()
+# UserOutSchema.model_rebuild()
+# UserInDBSchema.model_rebuild()
+# UserSchema.model_rebuild()
