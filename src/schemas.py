@@ -84,7 +84,6 @@ class TestUpdateSchema(BaseModel):
     title: str | None = Field(default=None, max_length=256)
     description: str | None = Field(default=None, max_length=256)
     passing_score: float | None = None
-    user_id: UUID
 
 
 class TestSchema(TimestampSchema):
@@ -124,7 +123,6 @@ class QuestionUpdateSchema(BaseModel):
     title: str | None = Field(default=None, max_length=256)
     question_type: QuestionTypes | None = None
     scores: int | None = None
-    test_id: int
 
 
 class QuestionSchema(TimestampSchema):
@@ -160,7 +158,6 @@ class OptionOutSchema(OptionBaseSchema):
 class OptionUpdateSchema(BaseModel):
     text: str | None = Field(default=None, max_length=256)
     is_correct: bool | None = None
-    question_id: int
 
 
 class OptionSchema(TimestampSchema):

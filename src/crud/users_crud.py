@@ -23,16 +23,16 @@ async def create_user(
     return res_user
 
 
-async def get_user_by_id(session: AsyncSession, id: UUID) -> UserModel | None:
+async def get_user_by_id(session: AsyncSession, user_id: UUID) -> UserModel | None:
     stmt = (
         select(UserModel)
-        .where(UserModel.id == id)
+        .where(UserModel.id == user_id)
         .options(selectinload(UserModel.tests))
     )
-    user_db = (await session.execute(stmt)).first()
-    if not user_db:
+    user = (await session.execute(stmt)).first()
+    if not user:
         return None
-    return user_db[0]
+    return user[0]
 
 
 async def get_user_by_email(session: AsyncSession, email: str) -> UserModel | None:
@@ -57,7 +57,9 @@ async def get_users(session: AsyncSession):
     return result
 
 
-async def update_user(session: AsyncSession, new_user: UserUpdateSchema, user_id: UUID):
+async def update_user(
+    session: AsyncSession, new_user: UserUpdateSchema, user_id: UUID
+) -> UserModel | None:
     user = await get_user_by_id(session, user_id)
     if not user:
         return None
@@ -72,7 +74,7 @@ async def update_user(session: AsyncSession, new_user: UserUpdateSchema, user_id
     return user
 
 
-async def delete_user(session: AsyncSession, user_id: UUID):
+async def delete_user(session: AsyncSession, user_id: UUID) -> UserModel | None:
     user = await get_user_by_id(session, user_id)
     if not user:
         return None
