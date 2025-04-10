@@ -1,12 +1,14 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 
 from uuid import UUID
 
-from src.api.deps import SessionDep
+from src.api.deps import SessionDep, get_current_active_auth_user
 from src.crud import users_crud
+from src.models.users import UserModel
 from src.schemas import (
     UserCreateSchema,
     UserUpdateSchema,
+    UserInDBSchema,
 )
 
 
@@ -16,10 +18,17 @@ router = APIRouter(
 )
 
 
+@router.get("/users/me")
+async def get_current_user(
+    current_user: UserInDBSchema = Depends(get_current_active_auth_user),
+):
+    return current_user  # поменять на dict
+
+
 @router.post("/create_user")
 async def create_user(
     session: SessionDep, user_create: UserCreateSchema, is_superuser: bool | None = None
-) -> dict:
+):
     user = await users_crud.get_user_by_email(session, user_create.email)
     if user:
         raise HTTPException(
@@ -27,7 +36,7 @@ async def create_user(
             detail="Пользователь с таким email уже создан",
         )
     user = await users_crud.create_user(session, user_create, is_superuser)
-    return {"response": True}
+    return user
 
 
 @router.get("/get_users")

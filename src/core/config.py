@@ -38,6 +38,12 @@ class Settings(BaseSettings):
     CORS_METHODS: list[str]
     CORS_HEADERS: list[str]
 
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+
+    IS_PROD: bool
+
     @computed_field
     @property
     def POSTGRES_URL_ASYNC(self) -> PostgresDsn:

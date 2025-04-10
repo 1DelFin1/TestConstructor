@@ -227,3 +227,8 @@ class TestedUserSchema(TimestampSchema):
     first_name: str
     last_name: str
     result: "ResultSchema"
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    token_type: str
