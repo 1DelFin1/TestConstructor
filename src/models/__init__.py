@@ -3,6 +3,7 @@ __all__ = (
     "TestedUserModel",
     "TestModel",
     "QuestionModel",
+    "QuestionTypes",
     "OptionModel",
     "ResultModel",
 )
@@ -14,6 +15,7 @@ from src.models.users import (
 from src.models.tests import (
     TestModel,
     QuestionModel,
+    QuestionTypes,
     OptionModel,
     ResultModel,
 )

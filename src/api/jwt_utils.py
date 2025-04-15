@@ -22,7 +22,7 @@ class JWTAuthenticator:
             exp=expire,
             iat=datetime.utcnow(),
         )
-        encoded = jwt.encode(payload, key, algorithm)
+        encoded = jwt.encode(to_encode, key, algorithm)
         return encoded
 
     @staticmethod

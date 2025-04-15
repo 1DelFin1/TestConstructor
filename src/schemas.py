@@ -6,13 +6,13 @@ from src.models.tests import QuestionTypes
 
 
 # Timestamp
-class TimestampSchema(BaseModel):
-    created_at: datetime
-    updated_at: datetime
+# class TimestampSchema(BaseModel):
+#     created_at: datetime
+#     updated_at: datetime
 
 
 # User
-class UserBaseSchema(TimestampSchema):
+class UserBaseSchema(BaseModel):
     email: EmailStr = Field(max_length=255)
     first_name: str
     last_name: str
@@ -45,7 +45,7 @@ class UserInDBSchema(UserBaseSchema):
     hashed_password: str
 
 
-class UserSchema(TimestampSchema):
+class UserSchema(BaseModel):
     id: UUID
     email: str
     first_name: str
@@ -58,7 +58,7 @@ class UserSchema(TimestampSchema):
 
 
 # Test
-class TestBaseSchema(TimestampSchema):
+class TestBaseSchema(BaseModel):
     title: str = Field(max_length=256)
     description: str = Field(max_length=256)
     user_id: UUID
@@ -68,6 +68,13 @@ class TestBaseSchema(TimestampSchema):
 class TestCreateSchema(TestBaseSchema):
     # author: "UserSchema"
     questions: list["QuestionCreateSchema"]
+
+
+class TestSendSchema(BaseModel):
+    title: str = Field(max_length=256)
+    description: str = Field(max_length=256)
+    passing_score: float
+    questions: list["QuestionSendSchema"]
 
 
 class TestOutSchema(TestBaseSchema):
@@ -86,7 +93,7 @@ class TestUpdateSchema(BaseModel):
     passing_score: float | None = None
 
 
-class TestSchema(TimestampSchema):
+class TestSchema(BaseModel):
     id: int
     title: str
     description: str
@@ -98,7 +105,7 @@ class TestSchema(TimestampSchema):
 
 
 # Question
-class QuestionBaseSchema(TimestampSchema):
+class QuestionBaseSchema(BaseModel):
     title: str = Field(max_length=256)
     question_type: "QuestionTypes"
     scores: int
@@ -108,6 +115,13 @@ class QuestionBaseSchema(TimestampSchema):
 class QuestionCreateSchema(QuestionBaseSchema):
     # test: "TestSchema"
     options: list["OptionCreateSchema"]
+
+
+class QuestionSendSchema(BaseModel):
+    title: str = Field(max_length=256)
+    question_type: "QuestionTypes"
+    scores: int
+    options: list["OptionSendSchema"]
 
 
 class QuestionOutSchema(QuestionBaseSchema):
@@ -125,7 +139,7 @@ class QuestionUpdateSchema(BaseModel):
     scores: int | None = None
 
 
-class QuestionSchema(TimestampSchema):
+class QuestionSchema(BaseModel):
     id: int
     title: str = Field(max_length=256)
     question_type: "QuestionTypes"
@@ -136,7 +150,7 @@ class QuestionSchema(TimestampSchema):
 
 
 # Option
-class OptionBaseSchema(TimestampSchema):
+class OptionBaseSchema(BaseModel):
     text: str = Field(max_length=256)
     is_correct: bool
     question_id: int
@@ -145,6 +159,11 @@ class OptionBaseSchema(TimestampSchema):
 class OptionCreateSchema(OptionBaseSchema):
     pass
     # question: "QuestionSchema"
+
+
+class OptionSendSchema(BaseModel):
+    text: str = Field(max_length=256)
+    is_correct: bool
 
 
 class OptionOutSchema(OptionBaseSchema):
@@ -160,7 +179,7 @@ class OptionUpdateSchema(BaseModel):
     is_correct: bool | None = None
 
 
-class OptionSchema(TimestampSchema):
+class OptionSchema(BaseModel):
     id: int
     text: str = Field(max_length=256)
     is_correct: bool
@@ -169,7 +188,7 @@ class OptionSchema(TimestampSchema):
 
 
 # Result
-class ResultBaseSchema(TimestampSchema):
+class ResultBaseSchema(BaseModel):
     score: float
     score_passed: bool
     test_id: int
@@ -191,7 +210,7 @@ class ResultOutSchema(ResultBaseSchema):
         from_attributes = True
 
 
-class ResultSchema(TimestampSchema):
+class ResultSchema(BaseModel):
     id: int
     score: float
     test_id: int
@@ -202,11 +221,11 @@ class ResultSchema(TimestampSchema):
 
 
 # Tested user
-class TestedUserBaseSchema(TimestampSchema):
+class TestedUserBaseSchema(BaseModel):
     email: EmailStr = Field(max_length=255)
     first_name: str
     last_name: str
-    score: int
+    score: int = 0
 
 
 class TestedUserCreateSchema(TestedUserBaseSchema):
@@ -221,7 +240,7 @@ class TestedUserOutSchema(TestedUserBaseSchema):
         from_attributes = True
 
 
-class TestedUserSchema(TimestampSchema):
+class TestedUserSchema(BaseModel):
     id: int
     email: str
     first_name: str

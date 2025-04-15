@@ -58,6 +58,6 @@ async def update_user(session: SessionDep, new_user: UserUpdateSchema, user_id: 
 
 
 @router.delete("/delete_user/{user_id}")
-async def update_user(session: SessionDep, user_id: UUID):
+async def delete_user(session: SessionDep, user_id: UUID):
     result = await users_crud.delete_user(session, user_id)
     return result

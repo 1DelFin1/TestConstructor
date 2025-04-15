@@ -75,15 +75,24 @@ SessionDep = Annotated[AsyncSession, Depends(get_db)]
 async def get_current_active_auth_user(request: Request, session: SessionDep):
     token = request.cookies.get("token")
     if not token:
-        raise HTTPException(status_code=401, detail="Not authorized")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized",
+        )
 
     try:
         payload = JWTAuthenticator.decode_jwt_token(token)
     except InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+        )
 
     user = await users_crud.get_user_by_email(session, payload.get("email"))
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
 
     return user
