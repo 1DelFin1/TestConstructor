@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.get("/users/me")
+@router.get("/me")
 async def get_current_user(
     current_user: UserInDBSchema = Depends(get_current_active_auth_user),
 ):

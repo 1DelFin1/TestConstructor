@@ -11,7 +11,7 @@ from fastapi.security import (
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.jwt_utils import JWTAuthenticator
+from src.api.utils import JWTAuthenticator
 from src.crud import users_crud
 from src.core.security import verify_password
 from src.core.database import engine

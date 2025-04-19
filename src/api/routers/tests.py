@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter
 
 from src.api.deps import SessionDep
@@ -27,6 +29,12 @@ async def create_or_save_test(
 async def get_test(session: SessionDep, test_id: int):
     test = await tests_crud.get_test_by_id(session, test_id)
     return test
+
+
+@router.get("/get_user_tests/{user_id}")
+async def get_user_tests(session: SessionDep, user_id: UUID):
+    tests = await tests_crud.get_user_tests(session, user_id)
+    return tests
 
 
 @router.post("/send_test")

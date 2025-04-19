@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import HTTPException, status
 
 from sqlalchemy import select
@@ -104,6 +106,12 @@ async def get_test_by_id(session: AsyncSession, test_id: int) -> TestModel | Non
     if not result:
         return None
     return result[0]
+
+
+async def get_user_tests(session: AsyncSession, user_id: UUID):
+    stmt = select(TestModel).where(TestModel.user_id == user_id)
+    tests = (await session.scalars(stmt)).all()
+    return tests
 
 
 async def delete_test(session: AsyncSession, test_id: int) -> TestModel | None:
