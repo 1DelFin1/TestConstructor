@@ -1,3 +1,4 @@
+from typing import overload
 from uuid import UUID
 
 from fastapi import HTTPException, status
@@ -6,13 +7,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from typing import overload
-
+from src.api.utils import CheckAnswers
 from src.models import (
     TestModel,
     QuestionModel,
     OptionModel,
-    QuestionTypes,
     ResultModel,
     TestedUserModel,
 )
@@ -21,6 +20,7 @@ from src.schemas import (
     TestUpdateSchema,
     TestSendSchema,
     TestedUserCreateSchema,
+    QuestionSendSchema,
 )
 
 
@@ -36,64 +36,80 @@ async def create_or_save_test(
 ) -> TestModel: ...
 
 
+async def create_test(
+    session: AsyncSession,
+    test: TestCreateSchema | TestUpdateSchema,
+) -> TestModel:
+    questions = []
+    for question in test.questions:
+        options = [OptionModel(**opt.dict()) for opt in question.options]
+        question_obj = QuestionModel(
+            title=question.title,
+            question_type=question.question_type,
+            options=options,
+            scores=question.scores,
+        )
+        questions.append(question_obj)
+    new_test = TestModel(
+        title=test.title,
+        description=test.description,
+        passing_score=test.passing_score,
+        user_id=test.user_id,
+        duration=test.duration,
+        questions=questions,
+    )
+
+    session.add(new_test)
+    await session.commit()
+    await session.refresh(new_test)
+    return new_test
+
+
+async def save_test(
+    session: AsyncSession,
+    test: TestCreateSchema | TestUpdateSchema,
+    test_id: int | None,
+) -> TestModel:
+    stmt = (
+        select(TestModel)
+        .where(TestModel.id == test_id)
+        .options(selectinload(TestModel.questions))
+    )
+    result = await session.execute(stmt)
+    existing_test = result.scalar_one_or_none()
+    if existing_test is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Тест с таким id не найден",
+        )
+    existing_test.title = test.title
+    existing_test.description = test.description
+    existing_test.passing_score = test.passing_score
+    existing_test.questions.clear()
+    for question in test.questions:
+        options = [OptionModel(**opt.dict()) for opt in question.options]
+        question_obj = QuestionModel(
+            title=question.title,
+            question_type=question.question_type,
+            options=options,
+            scores=question.scores,
+        )
+        existing_test.questions.append(question_obj)
+
+    await session.commit()
+    await session.refresh(existing_test)
+    return existing_test
+
+
 async def create_or_save_test(
     session: AsyncSession,
     test: TestCreateSchema | TestUpdateSchema,
     test_id: int | None,
 ) -> TestModel:
     if test_id is None:
-        questions = []
-        for question in test.questions:
-            options = [OptionModel(**opt.dict()) for opt in question.options]
-            question_obj = QuestionModel(
-                title=question.title,
-                question_type=question.question_type,
-                options=options,
-                scores=question.scores,
-            )
-            questions.append(question_obj)
-        new_test = TestModel(
-            title=test.title,
-            description=test.description,
-            passing_score=test.passing_score,
-            user_id=test.user_id,
-            questions=questions,
-        )
-
-        session.add(new_test)
-        await session.commit()
-        await session.refresh(new_test)
-        return new_test
+        return await create_test(session, test)
     else:
-        stmt = (
-            select(TestModel)
-            .where(TestModel.id == test_id)
-            .options(selectinload(TestModel.questions))
-        )
-        result = await session.execute(stmt)
-        existing_test = result.scalar_one_or_none()
-        if existing_test is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Тест с таким id не найден",
-            )
-        existing_test.title = test.title
-        existing_test.description = test.description
-        existing_test.passing_score = test.passing_score
-        existing_test.questions.clear()
-        for question in test.questions:
-            options = [OptionModel(**opt.dict()) for opt in question.options]
-            question_obj = QuestionModel(
-                title=question.title,
-                question_type=question.question_type,
-                options=options,
-                scores=question.scores,
-            )
-            existing_test.questions.append(question_obj)
-
-        await session.commit()
-        await session.refresh(existing_test)
-        return existing_test
+        return await save_test(session, test, test_id)
 
 
 async def get_test_by_id(session: AsyncSession, test_id: int) -> TestModel | None:
@@ -104,7 +120,10 @@ async def get_test_by_id(session: AsyncSession, test_id: int) -> TestModel | Non
     )
     result = (await session.execute(stmt)).first()
     if not result:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Тест с таким id не найден",
+        )
     return result[0]
 
 
@@ -114,32 +133,22 @@ async def get_user_tests(session: AsyncSession, user_id: UUID):
     return tests
 
 
-async def delete_test(session: AsyncSession, test_id: int) -> TestModel | None:
+async def delete_test(session: AsyncSession, test_id: int):
     test = await get_test_by_id(session, test_id)
     if not test:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Тест с таким id не найден",
+        )
     await session.delete(test)
     await session.commit()
-    return test
+    return {"message": f"Test {test_id} successfully deleted", "ok": True}
 
 
-async def send_test(
-    session: AsyncSession,
-    test_id: int,
-    sent_test: TestSendSchema,
-    tested_user_data: TestedUserCreateSchema,
+async def get_right_test(
+    ans: list[QuestionSendSchema],
+    test: TestModel | None,
 ):
-    test = await get_test_by_id(session, test_id)
-
-    tested_user = tested_user_data.model_dump()
-    tested_user_model = TestedUserModel(**tested_user)
-    session.add(tested_user_model)
-    stmt = select(TestedUserModel).where(
-        TestedUserModel.email == tested_user_model.email
-    )
-    tested_user_model = (await session.execute(stmt)).first()[0]
-
-    ans = sent_test.questions
     answers = [
         {
             "title": a.title,
@@ -164,41 +173,44 @@ async def send_test(
                 {"text": option.text, "is_correct": option.is_correct}
             )
         right_test.append(question_data)
+    return answers, right_test
+
+
+async def send_test(
+    session: AsyncSession,
+    test_id: int,
+    sent_test: TestSendSchema,
+    tested_user_data: TestedUserCreateSchema,
+):
+    test = await get_test_by_id(session, test_id)
+
+    tested_user = tested_user_data.model_dump()
+    tested_user_model = TestedUserModel(**tested_user)
+    session.add(tested_user_model)
+    stmt = select(TestedUserModel).where(
+        TestedUserModel.email == tested_user_model.email
+    )
+    tested_user_model = (await session.execute(stmt)).first()[0]
+
+    ans = sent_test.questions
+    answers, right_test = await get_right_test(ans, test)
 
     score = 0
     passing_score = test.passing_score
-
     for right_q, user_q in zip(right_test, answers):
         if right_q["title"] != user_q["title"]:
             continue
 
-        current_question_score = right_q["scores"]
-        question_type = right_q["question_type"]
-        right_options = right_q["options"]
-        user_options = user_q.get("options", [])
-        user_answer_text = user_q.get("answer_text", "").strip()
-
-        if question_type == QuestionTypes.single:
-            user_selected = next(
-                (opt for opt in user_options if opt.get("is_correct", False)), None
-            )
-            if user_selected and any(
-                opt["text"] == user_selected["text"] and opt["is_correct"]
-                for opt in right_options
-            ):
-                score += current_question_score
-
-        elif question_type == QuestionTypes.multiple:
-            correct_set = {opt["text"] for opt in right_options if opt["is_correct"]}
-            user_set = {
-                opt["text"] for opt in user_options if opt.get("is_correct", False)
-            }
-            if correct_set == user_set:
-                score += current_question_score
-
-        elif question_type == QuestionTypes.text:
-            if user_answer_text:
-                score += current_question_score
+        check_answers = CheckAnswers(
+            score,
+            current_question_score=right_q["scores"],
+            question_type=right_q["question_type"],
+            right_options=right_q["options"],
+            user_options=user_q.get("options", []),
+            user_answer_text=user_q.get("answer_text", "").strip(),
+        )
+        await check_answers.check_answer()
+        score = check_answers.score
 
     if score >= passing_score:
         score_passed = True
@@ -216,7 +228,7 @@ async def send_test(
     session.add(result_model)
 
     await session.commit()
-    return {"detail": "test successfully sent"}
+    return {"detail": "test successfully sent", "ok": True}
 
 
 # {
@@ -224,6 +236,7 @@ async def send_test(
 #     "title": "Новый тест123",
 #     "description": "Описание123",
 #     "passing_score": 20,
+#     "duration": "17:10:16.572Z",
 #     "questions": [
 #       {
 #         "title": "Новый вопрос 1",

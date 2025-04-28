@@ -51,7 +51,7 @@ async def get_user(session: SessionDep, user_id: UUID):
     return result
 
 
-@router.post("/update_user/{user_id}")
+@router.patch("/update_user/{user_id}")
 async def update_user(session: SessionDep, new_user: UserUpdateSchema, user_id: UUID):
     result = await users_crud.update_user(session, new_user, user_id)
     return result

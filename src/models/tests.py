@@ -1,3 +1,4 @@
+from datetime import datetime, time
 from uuid import UUID
 from typing import TYPE_CHECKING
 from enum import Enum
@@ -8,6 +9,7 @@ from sqlalchemy import (
     Boolean,
     Integer,
     Float,
+    Time,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -32,6 +34,7 @@ class TestModel(Base, TimestampMixin):
     title: Mapped[str] = mapped_column(String(256), nullable=False)
     description: Mapped[str] = mapped_column(String(256), nullable=False)
     passing_score: Mapped[int] = mapped_column(Float, nullable=False)
+    duration: Mapped[time] = mapped_column(Time, nullable=False)
 
     user_id: Mapped[UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),

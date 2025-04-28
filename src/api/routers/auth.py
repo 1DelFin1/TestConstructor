@@ -21,10 +21,10 @@ async def login(
     response: Response,
 ):
     await Authorization.login(session, form_data, response)
-    return {"message": "Logged is successfully"}
+    return {"message": "Logged is successfully", "ok": True}
 
 
-@router.get("/logout")
+@router.post("/logout")
 def logout(response: Response):
     response.delete_cookie("token")
-    return {"message": "Successfully logged out"}
+    return {"message": "Successfully logged out", "ok": True}

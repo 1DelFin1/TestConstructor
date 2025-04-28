@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, EmailStr
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, time
 
 from src.models.tests import QuestionTypes
 
@@ -63,6 +63,7 @@ class TestBaseSchema(BaseModel):
     description: str = Field(max_length=256)
     user_id: UUID
     passing_score: float
+    duration: time
 
 
 class TestCreateSchema(TestBaseSchema):
@@ -74,6 +75,7 @@ class TestSendSchema(BaseModel):
     title: str = Field(max_length=256)
     description: str = Field(max_length=256)
     passing_score: float
+    duration: time
     questions: list["QuestionSendSchema"]
 
 
@@ -91,6 +93,7 @@ class TestUpdateSchema(BaseModel):
     title: str | None = Field(default=None, max_length=256)
     description: str | None = Field(default=None, max_length=256)
     passing_score: float | None = None
+    duration: time | None = None
 
 
 class TestSchema(BaseModel):
@@ -100,6 +103,7 @@ class TestSchema(BaseModel):
     user_id: UUID
     passing_score: float
     # author: "UserSchema"
+    duration: time
     questions: list["QuestionSchema"]
     results: list["ResultSchema"]
 
@@ -109,7 +113,7 @@ class QuestionBaseSchema(BaseModel):
     title: str = Field(max_length=256)
     question_type: "QuestionTypes"
     scores: int
-    test_id: int
+    test_id: int | None = None
 
 
 class QuestionCreateSchema(QuestionBaseSchema):
@@ -153,7 +157,7 @@ class QuestionSchema(BaseModel):
 class OptionBaseSchema(BaseModel):
     text: str = Field(max_length=256)
     is_correct: bool
-    question_id: int
+    question_id: int | None = None
 
 
 class OptionCreateSchema(OptionBaseSchema):

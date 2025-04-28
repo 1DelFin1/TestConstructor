@@ -1,18 +1,14 @@
+from fastapi import HTTPException, status
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from uuid import UUID
-
-from sqlalchemy.orm import selectinload, joinedload
-
-from src.models import UserModel, ResultModel, TestedUserModel
-from src.schemas import UserCreateSchema
-from src.core.security import get_password_hash
+from src.models import ResultModel, TestedUserModel
 
 
 async def get_user_result(
     session: AsyncSession, test_id: int, email: str
-) -> ResultModel | None:
+) -> ResultModel:
     stmt = (
         select(ResultModel)
         .join(TestedUserModel)
@@ -20,5 +16,8 @@ async def get_user_result(
     )
     result = (await session.execute(stmt)).first()
     if not result:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Результат не найден, некорректный test_id или email",
+        )
     return result[0]

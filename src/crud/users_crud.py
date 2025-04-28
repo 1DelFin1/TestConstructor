@@ -1,9 +1,10 @@
+from fastapi import HTTPException, status
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from uuid import UUID
-
-from sqlalchemy.orm import selectinload
 
 from src.models import UserModel
 from src.schemas import UserCreateSchema, UserUpdateSchema
@@ -31,7 +32,10 @@ async def get_user_by_id(session: AsyncSession, user_id: UUID) -> UserModel | No
     )
     user = (await session.execute(stmt)).first()
     if not user:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пользователь с таким id не найден",
+        )
     return user[0]
 
 
@@ -43,10 +47,16 @@ async def get_user_by_email(session: AsyncSession, email: str) -> UserModel | No
     )
     result = await session.execute(stmt)
     if not result:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пользователь с таким email не найден",
+        )
     user = result.first()
     if not user:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пользователь с таким email не найден",
+        )
     return user[0]
 
 
@@ -62,7 +72,10 @@ async def update_user(
 ) -> UserModel | None:
     user = await get_user_by_id(session, user_id)
     if not user:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пользователь с таким id не найден",
+        )
     new_user_data = new_user.model_dump(exclude_unset=True)
     if "password" in new_user_data:
         password = new_user_data["password"]
@@ -77,7 +90,10 @@ async def update_user(
 async def delete_user(session: AsyncSession, user_id: UUID) -> UserModel | None:
     user = await get_user_by_id(session, user_id)
     if not user:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пользователь с таким id не найден",
+        )
     await session.delete(user)
     await session.commit()
     return user
