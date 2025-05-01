@@ -5,13 +5,16 @@ from fastapi import HTTPException, status, Response, Depends
 from datetime import datetime, timedelta
 import jwt
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 
 from src.core.config import settings
 from src.core.security import verify_password
 from src.crud import users_crud
-from src.models import QuestionTypes
+from src.models import QuestionTypes, TestedUserModel, ResultModel
 from src.requset_forms import OAuth2EmailRequestForm
+from src.schemas import TestSendSchema, TestedUserCreateSchema
 
 
 class JWTAuthenticator:
@@ -72,7 +75,7 @@ class Authorization:
             key="token",
             value=token,
             max_age=int(timedelta(days=7).total_seconds()),
-            httponly=True,
+            httponly=False,  # изменить на True
             secure=settings.IS_PROD,
             samesite="lax",
         )
@@ -126,3 +129,16 @@ class CheckAnswers:
 
         elif self.question_type == QuestionTypes.text:
             await self.check_text_type()
+
+
+async def get_users_score(
+    session: AsyncSession,
+    tested_user: TestedUserCreateSchema,
+):
+    stmt = select(TestedUserModel).where(TestedUserModel.email == tested_user.email)
+    tested_user_model = (await session.execute(stmt)).first()
+    stmt = select(ResultModel).where(
+        ResultModel.tested_user_id == tested_user_model[0].id
+    )
+    result_model = ((await session.execute(stmt)).first())[0]
+    return result_model.score_passed, tested_user_model[0].score

@@ -2,6 +2,8 @@ from uuid import UUID
 
 from fastapi import APIRouter
 
+from src.api.utils import get_users_score
+from src.api.sending_result import send_result_on_email
 from src.api.deps import SessionDep
 from src.crud import tests_crud
 from src.schemas import (
@@ -45,6 +47,14 @@ async def send_test(
     tested_user: TestedUserCreateSchema,
 ):
     result = await tests_crud.send_test(session, test_id, test, tested_user)
+    score_is_passed, users_score = await get_users_score(session, tested_user)
+    await send_result_on_email(
+        tested_user.email,
+        test.title,
+        users_score,
+        score_is_passed,
+        test.passing_score,
+    )
     return result
 
 

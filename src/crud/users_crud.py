@@ -47,16 +47,18 @@ async def get_user_by_email(session: AsyncSession, email: str) -> UserModel | No
     )
     result = await session.execute(stmt)
     if not result:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Пользователь с таким email не найден",
-        )
+        # raise HTTPException(
+        #     status_code=status.HTTP_404_NOT_FOUND,
+        #     detail="Пользователь с таким email не найден",
+        # )
+        return None
     user = result.first()
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Пользователь с таким email не найден",
-        )
+        # raise HTTPException(
+        #     status_code=status.HTTP_404_NOT_FOUND,
+        #     detail="Пользователь с таким email не найден",
+        # )
+        return None
     return user[0]
 
 

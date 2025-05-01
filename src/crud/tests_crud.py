@@ -106,6 +106,7 @@ async def create_or_save_test(
     test: TestCreateSchema | TestUpdateSchema,
     test_id: int | None,
 ) -> TestModel:
+    print(test_id)
     if test_id is None:
         return await create_test(session, test)
     else:
@@ -278,7 +279,51 @@ async def send_test(
 #   "tested_user": {
 #     "email": "user5@example.com",
 #     "first_name": "string",
-#     "last_name": "string",
-#     "score": 0
+#     "last_name": "string"
 #   }
+# }
+
+# {
+#   "title": "Новый тест",
+#   "description": "Описание123",
+#   "user_id": "2ac5e036-f3c0-41e3-a1f9-348e62fed134",
+#   "passing_score": 20,
+#   "duration": "17:10:16",
+#   "questions": [
+#     {
+#       "title": "Новый вопрос 1",
+#       "question_type": "single",
+#       "scores": 10,
+#       "options": [
+#         { "text": "Вариант ответа 1", "is_correct": false },
+#         { "text": "Вариант ответа 2", "is_correct": true },
+#         { "text": "Вариант ответа 3", "is_correct": false },
+#         { "text": "Вариант ответа 4", "is_correct": false },
+#         { "text": "Вариант ответа 5", "is_correct": false }
+#       ]
+#     },
+#     {
+#       "title": "Новый вопрос 2",
+#       "question_type": "single",
+#       "scores": 10,
+#       "options": [
+#         { "text": "Вариант ответа 1", "is_correct": false },
+#         { "text": "Вариант ответа 2", "is_correct": false },
+#         { "text": "Вариант ответа 3", "is_correct": false },
+#         { "text": "Вариант ответа 4", "is_correct": true },
+#         { "text": "Вариант ответа 5", "is_correct": false }
+#       ]
+#     },
+#     {
+#       "title": "Новый вопрос 3",
+#       "question_type": "multiple",
+#       "scores": 10,
+#       "options": [
+#         { "text": "Вариант ответа 1", "is_correct": false },
+#         { "text": "Вариант ответа 2", "is_correct": true },
+#         { "text": "Вариант ответа 3", "is_correct": true },
+#         { "text": "Вариант ответа 4", "is_correct": false }
+#       ]
+#     }
+#   ]
 # }

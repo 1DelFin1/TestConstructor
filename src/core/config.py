@@ -44,6 +44,11 @@ class Settings(BaseSettings):
 
     IS_PROD: bool
 
+    SMTP_SERVER: str
+    SMTP_PORT: int
+    SMTP_USERNAME: str
+    SMTP_PASSWORD: str
+
     @computed_field
     @property
     def POSTGRES_URL_ASYNC(self) -> PostgresDsn:
