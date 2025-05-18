@@ -3,15 +3,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
-from src.api.routers import users, crm, tests, auth
+from src.api.routers import router
 from src.core.config import settings
 
 
 app = FastAPI()
-app.include_router(crm.router)
-app.include_router(users.router)
-app.include_router(tests.router)
-app.include_router(auth.router)
+app.include_router(router)
 
 app.add_middleware(
     CORSMiddleware,

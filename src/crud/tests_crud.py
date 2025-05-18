@@ -85,6 +85,7 @@ async def save_test(
     existing_test.title = test.title
     existing_test.description = test.description
     existing_test.passing_score = test.passing_score
+    existing_test.duration = test.duration
     existing_test.questions.clear()
     for question in test.questions:
         options = [OptionModel(**opt.dict()) for opt in question.options]
@@ -106,7 +107,6 @@ async def create_or_save_test(
     test: TestCreateSchema | TestUpdateSchema,
     test_id: int | None,
 ) -> TestModel:
-    print(test_id)
     if test_id is None:
         return await create_test(session, test)
     else:
@@ -326,4 +326,71 @@ async def send_test(
 #       ]
 #     }
 #   ]
+# }
+
+
+# a = {
+#     "title": "333",
+#     "description": "Описание",
+#     "duration": "14:18:03",
+#     "passing_score": 20,
+#     "user_id": "defd7a5a-4f70-4970-9db5-19d7580d8e8b",
+#     "id": 79,
+#     "questions": [
+#         {
+#             "title": "Новый вопрос",
+#             "question_type": "single",
+#             "options": [
+#                 {"text": "Вариант ответа 1", "is_correct": false},
+#                 {"text": "Вариант ответа 2", "is_correct": false},
+#                 {"text": "Вариант ответа 3", "is_correct": false},
+#                 {"text": "Вариант ответа 4", "is_correct": false}
+#             ],
+#             "answer_text": "",
+#             "scores": 10
+#         },
+#         {
+#             "title": "Новый вопрос",
+#             "question_type": "text",
+#             "options": [
+#                 {
+#                 "text": "123",
+#                 "is_correct": true,
+#                 "question_id": 0
+#                 }
+#             ],
+#             "answer_text": "123",
+#             "scores": 10
+#         }
+#     ]
+# }
+
+# a = {
+#     "title": "333",
+#     "description": "Описание",
+#     "duration": "1:15:00",
+#     "passing_score": 20,
+#     "user_id": "defd7a5a-4f70-4970-9db5-19d7580d8e8b",
+#     "id": 79,
+#     "questions": [
+#         {
+#             "title": "Новый вопрос",
+#             "question_type": "single",
+#             "options": [
+#                 {"text": "Вариант ответа 1", "is_correct": false},
+#                 {"text": "Вариант ответа 2", "is_correct": false},
+#                 {"text": "Вариант ответа 3", "is_correct": false},
+#                 {"text": "Вариант ответа 4", "is_correct": false}
+#             ],
+#             "answer_text": "",
+#             "scores": 10
+#         },
+#         {
+#             "title": "Новый вопрос",
+#             "question_type": "text",
+#             "options": [{"text": "ffffaaaa", "is_correct": true}],
+#             "answer_text": "ffffaaaa",
+#             "scores": 10
+#         }
+#     ]
 # }

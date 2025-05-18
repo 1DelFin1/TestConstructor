@@ -119,6 +119,7 @@ class QuestionBaseSchema(BaseModel):
 class QuestionCreateSchema(QuestionBaseSchema):
     # test: "TestSchema"
     options: list["OptionCreateSchema"]
+    answer_text: str | None
 
 
 class QuestionSendSchema(BaseModel):

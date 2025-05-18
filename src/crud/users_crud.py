@@ -82,8 +82,10 @@ async def update_user(
     if "password" in new_user_data:
         password = new_user_data["password"]
         new_user_data["hashed_password"] = get_password_hash(password)
+        del new_user_data["password"]
     for key, value in new_user_data.items():
-        setattr(user, key, value)
+        if new_user_data[key] != "":
+            setattr(user, key, value)
     await session.commit()
     await session.refresh(user)
     return user

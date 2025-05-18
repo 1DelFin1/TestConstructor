@@ -4,7 +4,6 @@ from uuid import UUID
 
 from src.api.deps import SessionDep, get_current_active_auth_user
 from src.crud import users_crud
-from src.models.users import UserModel
 from src.schemas import (
     UserCreateSchema,
     UserUpdateSchema,
@@ -36,13 +35,13 @@ async def create_user(
             detail="Пользователь с таким email уже создан",
         )
     user = await users_crud.create_user(session, user_create, is_superuser)
-    return user
+    return {"ok": True, "user": user}
 
 
-@router.get("/get_users")
-async def get_users(session: SessionDep):
-    users = await users_crud.get_users(session)
-    return users
+# @router.get("/get_users")
+# async def get_users(session: SessionDep):
+#     users = await users_crud.get_users(session)
+#     return users
 
 
 @router.get("/get_users/{user_id}")
@@ -54,7 +53,7 @@ async def get_user(session: SessionDep, user_id: UUID):
 @router.patch("/update_user/{user_id}")
 async def update_user(session: SessionDep, new_user: UserUpdateSchema, user_id: UUID):
     result = await users_crud.update_user(session, new_user, user_id)
-    return result
+    return {"ok": True, "result": result}
 
 
 @router.delete("/delete_user/{user_id}")

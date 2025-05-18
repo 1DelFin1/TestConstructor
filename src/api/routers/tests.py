@@ -39,23 +39,23 @@ async def get_user_tests(session: SessionDep, user_id: UUID):
     return tests
 
 
-@router.post("/send_test")
-async def send_test(
-    session: SessionDep,
-    test_id: int,
-    test: TestSendSchema,
-    tested_user: TestedUserCreateSchema,
-):
-    result = await tests_crud.send_test(session, test_id, test, tested_user)
-    score_is_passed, users_score = await get_users_score(session, tested_user)
-    await send_result_on_email(
-        tested_user.email,
-        test.title,
-        users_score,
-        score_is_passed,
-        test.passing_score,
-    )
-    return result
+# @router.post("/send_test")
+# async def send_test(
+#     session: SessionDep,
+#     test_id: int,
+#     test: TestSendSchema,
+#     tested_user: TestedUserCreateSchema,
+# ):
+#     result = await tests_crud.send_test(session, test_id, test, tested_user)
+#     score_is_passed, users_score = await get_users_score(session, tested_user)
+#     await send_result_on_email(
+#         tested_user.email,
+#         test.title,
+#         users_score,
+#         score_is_passed,
+#         test.passing_score,
+#     )
+#     return result
 
 
 @router.delete("/delete_test/{test_id}")
