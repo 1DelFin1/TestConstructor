@@ -1,15 +1,6 @@
-import secrets
-import warnings
-from typing import Annotated, Any, Literal
-
 from pydantic import (
-    AnyUrl,
-    BeforeValidator,
-    EmailStr,
-    HttpUrl,
     PostgresDsn,
     computed_field,
-    model_validator,
 )
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -60,18 +51,6 @@ class Settings(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
-
-    # @computed_field
-    # @property
-    # def POSTGRES_URL(self) -> PostgresDsn:
-    #     return MultiHostUrl.build(
-    #         scheme="postgresql",
-    #         username=self.POSTGRES_USER,
-    #         password=self.POSTGRES_PASSWORD,
-    #         host=self.POSTGRES_SERVER,
-    #         port=self.POSTGRES_PORT,
-    #         path=self.POSTGRES_DB,
-    #     )
 
 
 settings = Settings()

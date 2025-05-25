@@ -1,11 +1,10 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Response
-from fastapi.security import OAuth2PasswordRequestForm
 
 from src.api.deps import SessionDep
 from src.api.utils import Authorization
-from src.requset_forms import OAuth2EmailRequestForm
+from src.request_forms import OAuth2EmailRequestForm
 
 
 router = APIRouter(

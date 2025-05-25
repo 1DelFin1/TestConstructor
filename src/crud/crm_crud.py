@@ -10,10 +10,9 @@ async def get_user_result(
     session: AsyncSession, test_id: int, email: str
 ) -> ResultModel:
     stmt = (
-        select(ResultModel, TestedUserModel)
+        select(ResultModel)
         .join(TestedUserModel)
-        .where(ResultModel.test_id == test_id)
-        .filter(TestedUserModel.email == email)
+        .where(ResultModel.test_id == test_id and TestedUserModel.email == email)
     )
     result = (await session.execute(stmt)).first()
     if not result:
