@@ -41,9 +41,7 @@ class TestedUserModel(Base, TimestampMixin):
     __tablename__ = "tested_users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
-    email: Mapped[str] = mapped_column(
-        String(255), unique=True, index=True, nullable=False
-    )
+    email: Mapped[str] = mapped_column(String(255), index=True, nullable=False)
     first_name: Mapped[str] = mapped_column(String(255), nullable=False)
     last_name: Mapped[str] = mapped_column(String(255), nullable=False)
     score: Mapped[int] = mapped_column(Integer, nullable=False)

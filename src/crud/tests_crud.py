@@ -188,11 +188,18 @@ async def send_test(
     tested_user = tested_user_data.model_dump()
     tested_user_model = TestedUserModel(**tested_user)
     session.add(tested_user_model)
-    stmt = select(TestedUserModel).where(
-        TestedUserModel.email == tested_user_model.email
+    stmt = (
+        select(TestedUserModel, ResultModel)
+        .join(TestedUserModel)
+        .where(ResultModel.test_id == test_id)
     )
-    tested_user_model = (await session.execute(stmt)).first()[0]
-
+    users_sent_this_test = (await session.execute(stmt)).all()
+    for user in users_sent_this_test:
+        if tested_user_model.email == user[0].email:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Вы уже прошли это тест!",
+            )
     ans = sent_test.questions
     answers, right_test = await get_right_test(ans, test)
 
@@ -230,6 +237,19 @@ async def send_test(
 
     await session.commit()
     return {"detail": "test successfully sent", "ok": True}
+
+
+async def get_users_sent(session: AsyncSession, test_id: int):
+    result = []
+    stmt = (
+        select(TestedUserModel, ResultModel)
+        .join(TestedUserModel)
+        .where(ResultModel.test_id == test_id)
+    )
+    users_sent_this_test = (await session.execute(stmt)).all()
+    for user in users_sent_this_test:
+        result.append(user[0])
+    return result
 
 
 # {
