@@ -13,7 +13,7 @@ from src.core.config import settings
 from src.core.security import verify_password
 from src.crud import users_crud
 from src.models import QuestionTypes, TestedUserModel, ResultModel
-from src.requset_forms import OAuth2EmailRequestForm
+from src.request_forms import OAuth2EmailRequestForm
 from src.schemas import TestSendSchema, TestedUserCreateSchema
 
 
