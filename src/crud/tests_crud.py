@@ -202,20 +202,18 @@ async def send_test(
             )
     ans = sent_test.questions
     answers, right_test = await get_right_test(ans, test)
-
     score = 0
     passing_score = test.passing_score
     for right_q, user_q in zip(right_test, answers):
         if right_q["title"] != user_q["title"]:
             continue
-
         check_answers = CheckAnswers(
             score,
             current_question_score=right_q["scores"],
             question_type=right_q["question_type"],
             right_options=right_q["options"],
-            user_options=user_q.get("options", []),
-            user_answer_text=user_q.get("answer_text", "").strip(),
+            user_options=user_q.get("options"),
+            user_answer_text=user_q.get("options")[0].get("text").strip(),
         )
         await check_answers.check_answer()
         score = check_answers.score
