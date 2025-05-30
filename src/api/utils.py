@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.config import settings
 from src.core.security import verify_password
 from src.crud import users_crud
-from src.models import QuestionTypes, TestedUserModel, ResultModel
+from src.models import QuestionTypes, TestedUserModel, ResultModel, TestModel
 from src.requset_forms import OAuth2EmailRequestForm
 from src.schemas import TestSendSchema, TestedUserCreateSchema
 
@@ -134,11 +134,15 @@ class CheckAnswers:
 async def get_users_score(
     session: AsyncSession,
     tested_user: TestedUserCreateSchema,
+    test_id: int,
 ):
-    stmt = select(TestedUserModel).where(TestedUserModel.email == tested_user.email)
-    tested_user_model = (await session.execute(stmt)).first()
-    stmt = select(ResultModel).where(
-        ResultModel.tested_user_id == tested_user_model[0].id
+    stmt = (
+        select(ResultModel, TestedUserModel)
+        .join(TestedUserModel)
+        .where(TestedUserModel.id == ResultModel.tested_user_id)
+        .filter(TestedUserModel.email == tested_user.email)
+        .filter(ResultModel.test_id == test_id)
     )
-    result_model = ((await session.execute(stmt)).first())[0]
-    return result_model.score_passed, tested_user_model[0].score
+    tested_user_model = (await session.execute(stmt)).first()
+
+    return tested_user_model[0].score
