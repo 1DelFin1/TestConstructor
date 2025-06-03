@@ -19,7 +19,7 @@ router = APIRouter(
 )
 
 
-@router.post("/send_test")
+@router.post("/send")
 async def send_test(
     session: SessionDep,
     test_id: int,

@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 
-@router.get("/get_data")
+@router.get("")
 async def get_data(session: SessionDep, test_id: int, email: str):
     result = await crm_crud.get_user_result(session, test_id, email)
     return result

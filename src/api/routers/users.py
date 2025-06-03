@@ -24,7 +24,7 @@ async def get_current_user(
     return current_user  # поменять на dict
 
 
-@router.post("/create_user")
+@router.post("")
 async def create_user(
     session: SessionDep, user_create: UserCreateSchema, is_superuser: bool | None = None
 ):
@@ -44,19 +44,19 @@ async def create_user(
 #     return users
 
 
-@router.get("/get_users/{user_id}")
+@router.get("/{user_id}")
 async def get_user(session: SessionDep, user_id: UUID):
     result = await users_crud.get_user_by_id(session, user_id)
     return result
 
 
-@router.patch("/update_user/{user_id}")
+@router.patch("/{user_id}")
 async def update_user(session: SessionDep, new_user: UserUpdateSchema, user_id: UUID):
     result = await users_crud.update_user(session, new_user, user_id)
     return {"ok": True, "result": result}
 
 
-@router.delete("/delete_user/{user_id}")
+@router.delete("/{user_id}")
 async def delete_user(session: SessionDep, user_id: UUID):
     result = await users_crud.delete_user(session, user_id)
     return result
