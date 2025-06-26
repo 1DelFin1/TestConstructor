@@ -81,7 +81,6 @@ class TestSendSchema(BaseModel):
 
 class TestOutSchema(TestBaseSchema):
     id: int
-    # author: "UserSchema"
     questions: list["QuestionSchema"] | None
     results: list["ResultSchema"] | None
 
@@ -102,7 +101,6 @@ class TestSchema(BaseModel):
     description: str
     user_id: UUID
     passing_score: float
-    # author: "UserSchema"
     duration: time
     questions: list["QuestionSchema"]
     results: list["ResultSchema"]
@@ -117,7 +115,6 @@ class QuestionBaseSchema(BaseModel):
 
 
 class QuestionCreateSchema(QuestionBaseSchema):
-    # test: "TestSchema"
     options: list["OptionCreateSchema"]
     answer_text: str | None
 
@@ -131,7 +128,6 @@ class QuestionSendSchema(BaseModel):
 
 class QuestionOutSchema(QuestionBaseSchema):
     id: int
-    # test: "TestSchema"
     options: list["OptionSchema"]
 
     class Config:
@@ -150,25 +146,23 @@ class QuestionSchema(BaseModel):
     question_type: "QuestionTypes"
     scores: int
     test_id: int
-    # test: "TestSchema"
     options: list["OptionSchema"]
 
 
 # Option
 class OptionBaseSchema(BaseModel):
     text: str = Field(max_length=256)
-    is_correct: bool
+    is_correct: bool | str
     question_id: int | None = None
 
 
 class OptionCreateSchema(OptionBaseSchema):
     pass
-    # question: "QuestionSchema"
 
 
 class OptionSendSchema(BaseModel):
     text: str = Field(max_length=256)
-    is_correct: bool
+    is_correct: bool | str
 
 
 class OptionOutSchema(OptionBaseSchema):
@@ -181,13 +175,13 @@ class OptionOutSchema(OptionBaseSchema):
 
 class OptionUpdateSchema(BaseModel):
     text: str | None = Field(default=None, max_length=256)
-    is_correct: bool | None = None
+    is_correct: bool | None | str = None
 
 
 class OptionSchema(BaseModel):
     id: int
     text: str = Field(max_length=256)
-    is_correct: bool
+    is_correct: bool | str
     question_id: int
     question: "QuestionSchema"
 
@@ -201,15 +195,11 @@ class ResultBaseSchema(BaseModel):
 
 
 class ResultCreateSchema(ResultBaseSchema):
-    # test: "TestSchema"
-    # tested_user: "TestedUserSchema"
     pass
 
 
 class ResultOutSchema(ResultBaseSchema):
     id: int
-    # test: "TestSchema"
-    # tested_user: "TestedUserSchema"
 
     class Config:
         from_attributes = True
@@ -221,8 +211,6 @@ class ResultSchema(BaseModel):
     test_id: int
     tested_user_id: int
     score_passed: bool
-    # test: "TestSchema"
-    # tested_user: "TestedUserSchema"
 
 
 # Tested user

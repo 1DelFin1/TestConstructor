@@ -15,10 +15,10 @@ async def get_user_result(
         .where(ResultModel.test_id == test_id)
         .filter(TestedUserModel.email == email)
     )
-    result = (await session.execute(stmt)).first()
+    result = await session.scalar(stmt)
     if not result:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Результат не найден, некорректный test_id или email",
         )
-    return result[0]
+    return result

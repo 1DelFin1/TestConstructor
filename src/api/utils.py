@@ -4,7 +4,6 @@ from fastapi import HTTPException, status, Response, Depends
 
 from datetime import datetime, timedelta
 import jwt
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,9 +11,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.config import settings
 from src.core.security import verify_password
 from src.crud import users_crud
-from src.models import QuestionTypes, TestedUserModel, ResultModel, TestModel
+from src.models import QuestionTypes, TestedUserModel, ResultModel
 from src.requset_forms import OAuth2EmailRequestForm
-from src.schemas import TestSendSchema, TestedUserCreateSchema
+from src.schemas import TestedUserCreateSchema
 
 
 class JWTAuthenticator:
@@ -108,7 +107,7 @@ class CheckAnswers:
         ):
             self.score += self.current_question_score
 
-    async def check_multiple_type(self):
+    async def check_multiple_and_pair_type(self):
         correct_set = {opt["text"] for opt in self.right_options if opt["is_correct"]}
         user_set = {
             opt["text"] for opt in self.user_options if opt.get("is_correct", False)
@@ -124,8 +123,11 @@ class CheckAnswers:
         if self.question_type == QuestionTypes.single:
             await self.check_single_type()
 
-        elif self.question_type == QuestionTypes.multiple:
-            await self.check_multiple_type()
+        elif (
+            self.question_type == QuestionTypes.multiple
+            or self.question_type == QuestionTypes.matching
+        ):
+            await self.check_multiple_and_pair_type()
 
         elif self.question_type == QuestionTypes.text:
             await self.check_text_type()
@@ -143,6 +145,5 @@ async def get_users_score(
         .filter(TestedUserModel.email == tested_user.email)
         .filter(ResultModel.test_id == test_id)
     )
-    tested_user_model = (await session.execute(stmt)).first()
-
-    return tested_user_model[0].score
+    tested_user_model = await session.scalar(stmt)
+    return tested_user_model.score

@@ -1,6 +1,6 @@
-from datetime import datetime, time
+from datetime import time
 from uuid import UUID
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from enum import Enum
 
 from sqlalchemy import (
@@ -10,6 +10,7 @@ from sqlalchemy import (
     Integer,
     Float,
     Time,
+    JSON,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -25,6 +26,7 @@ class QuestionTypes(Enum):
     single = "single"
     multiple = "multiple"
     text = "text"
+    matching = "matching"
 
 
 class TestModel(Base, TimestampMixin):
@@ -84,7 +86,7 @@ class OptionModel(Base, TimestampMixin):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     text: Mapped[str] = mapped_column(String(256), nullable=False)
-    is_correct: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    is_correct: Mapped[Union[bool, str]] = mapped_column(JSON, nullable=False)
 
     question_id: Mapped[int] = mapped_column(
         ForeignKey("questions.id", ondelete="CASCADE"),

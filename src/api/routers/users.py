@@ -21,7 +21,7 @@ router = APIRouter(
 async def get_current_user(
     current_user: UserInDBSchema = Depends(get_current_active_auth_user),
 ):
-    return current_user  # поменять на dict
+    return current_user
 
 
 @router.post("")

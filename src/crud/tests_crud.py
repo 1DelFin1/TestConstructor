@@ -75,8 +75,7 @@ async def save_test(
         .where(TestModel.id == test_id)
         .options(selectinload(TestModel.questions))
     )
-    result = await session.execute(stmt)
-    existing_test = result.scalar_one_or_none()
+    existing_test = await session.scalar(stmt)
     if existing_test is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -119,13 +118,13 @@ async def get_test_by_id(session: AsyncSession, test_id: int) -> TestModel | Non
         .where(TestModel.id == test_id)
         .options(selectinload(TestModel.questions).selectinload(QuestionModel.options))
     )
-    result = (await session.execute(stmt)).first()
+    result = await session.scalar(stmt)
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Тест с таким id не найден",
         )
-    return result[0]
+    return result
 
 
 async def get_user_tests(session: AsyncSession, user_id: UUID):
